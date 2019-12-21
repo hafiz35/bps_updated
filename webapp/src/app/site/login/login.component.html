@@ -1,0 +1,33 @@
+<div class="row justify-content-center mt-4 opacity">
+  <div class="col-12 col-md-4 col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-center"><i class="material-icons font-size-60">
+          perm_identity
+          </i></div>
+        <div class="page-title text-center">Login</div>
+        <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm">
+          <div class="alert alert-info" *ngIf="!isLoginValid">
+            Invalid User ID (or) Incorrect Password
+          </div>
+          <div class="form-group mt-4">
+            <input type="text" class="form-control" ngModel #uname="ngModel" id="username" name="uname"
+              placeholder="Enter Username" required (keydown.space)="$event.preventDefault();">
+            <span class="validation-error" *ngIf="uname.invalid && uname.touched">Username required</span>
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" ngModel #pass="ngModel" id="password" name="pass"
+              placeholder="Enter Password" required (keydown.space)="$event.preventDefault();">
+            <span class="validation-error" *ngIf="pass.invalid && pass.touched">Password required</span>
+          </div>
+          <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+              <input type="submit" class="btn bg-dark text-white text-center" [disabled]="loginForm.invalid" name="login"
+                value="Login">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

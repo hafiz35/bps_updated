@@ -1,0 +1,145 @@
+<div class="container-fluid py-3 opacity">
+    <div class="row">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4 mx-auto">
+            <div class="alert alert-success text-center mt-5" *ngIf="formSubmitted">
+                <div class="spinner-border" *ngIf="spinTheSpinner">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <div *ngIf="displayStatus">
+                    <i class="material-icons">
+                        check_circle_outline
+                    </i> Bill
+                    payement
+                    Successful
+                </div>
+            </div>
+            <div id="pay-invoice" class="card" *ngIf="!formSubmitted">
+                <div class="card-body">
+                    <div class="card-title">
+                        <h3 class="text-center">Pay Bill</h3>
+                    </div>
+                    <hr>
+                    <form [formGroup]="paymentForm" (submit)="proceedToPay()">
+                        <div class="form-group text-center">
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                    <img class="height-100" src="https://img.icons8.com/color/48/000000/paytm.png">
+                                </li>
+                            </ul>
+                        </div>
+                        <div *ngIf="!proceedpay">
+                            <div class="form-group">
+                                <label class="text-bold mb-1">Payment amount</label>
+                                <div>
+                                    Select Months:
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="docs-data mt-2">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-prepend">
+                                                    <button type="button" class="btn btn-dark"
+                                                        (click)="increaseMonths()"
+                                                        [disabled]="disableOnMaxMonths">+</button>
+                                                </span>
+                                                <input type="text" class="width-50  text-center" readonly
+                                                    [value]="monthsSelected">
+                                                <span class="input-group-append">
+                                                    <button type="button" class="btn btn-dark"
+                                                        (click)="decreaseMonths()"
+                                                        [disabled]="disableOnMinMonths">-</button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-8 mt-1">
+                                        <input id="cc-payment" name="cc-payment" type="text" readonly
+                                            class="form-control text-center" [value]="'$'+amountToPay">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cc-name" class="text-bold mb-1">Name</label>
+                                <input id="cc-name" name="cc-name" type="text" class="form-control"
+                                    formControlName="pname" (keydown.space)="$event.preventDefault();">
+                                <span class="validation-error"
+                                    *ngIf="paymentForm.get('pname').hasError('required') && paymentForm.get('pname').touched">
+                                    Name required</span>
+                                <span class="validation-error"
+                                    *ngIf="paymentForm.get('pname').hasError('pattern')">Enter
+                                    Characters
+                                    only</span>
+                                <span class="validation-error"
+                                    *ngIf="paymentForm.get('pname').hasError('maxlength')">Name
+                                    exceeded
+                                    max
+                                    characters</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="cc-number" class="text-bold control-label mb-1">Mobile Number</label>
+                                <input id="cc-number" type="text" class="form-control cc-number identified paytm"
+                                    formControlName="pnumber" (keydown.space)="$event.preventDefault();">
+                                <span class="validation-error"
+                                    *ngIf="(paymentForm.get('pnumber').hasError('required') && paymentForm.get('pnumber').touched) || (!paymentForm.get('pnumber').touched && paymentForm.get('pnumber').touched)">Mobile
+                                    Number
+                                    required</span>
+                                <span class="validation-error"
+                                    *ngIf="paymentForm.get('pnumber').hasError('pattern') && paymentForm.get('pnumber').touched">
+                                    Enter Correct Mobile Number
+                                </span>
+                                <span class="validation-error" *ngIf="paymentForm.get('pnumber').hasError('maxlength')">
+                                    Mobile Number Must Not Exceed 12 characters</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="text-bold control-label mb-1">Password</label>
+                                <input id="password" name="password" type="password" class="form-control"
+                                    formControlName="ppassword" (keydown.space)="$event.preventDefault();">
+                                <span class="validation-error"
+                                    *ngIf="(paymentForm.get('ppassword').hasError('required') && paymentForm.get('ppassword').touched) || (!paymentForm.get('ppassword').touched && paymentForm.get('ppassword').touched)">Password
+                                    required</span>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-lg btn-dark btn-block"
+                                    [disabled]="paymentForm.invalid">
+                                    Proceed To Pay
+                                </button>
+                            </div>
+                        </div>
+                        <div *ngIf="proceedpay">
+                            <form [formGroup]="proceedtopaymentForm" (submit)="onPaid()">
+                                <div class="form-group">
+                                    <div>
+                                        <span class="font-green mr-2" *ngIf="!resentOtp">OTP Sent To Your Mobile
+                                            Number</span>
+                                        <span class="font-green mr-2" *ngIf="resentOtp">OTP Resent To Your Mobile
+                                            Number</span>
+                                        <a class="homeButtons" (click)="resendOtp()">Resend OTP</a>
+                                    </div>
+                                    <label for="otp" class="text-bold control-label mb-1 mt-2">OTP</label>
+                                    <input id="otp" name="password" type="text" class="form-control"
+                                        formControlName="potp" (keydown.space)="$event.preventDefault();">
+                                    <span class="validation-error"
+                                        *ngIf="(proceedtopaymentForm.get('potp').hasError('required') && proceedtopaymentForm.get('potp').touched) || (!proceedtopaymentForm.get('potp').touched && proceedtopaymentForm.get('potp').touched)">OTP
+                                        required</span>
+                                    <span class="validation-error"
+                                        *ngIf="proceedtopaymentForm.get('potp').hasError('minlength') || proceedtopaymentForm.get('potp').hasError('maxlength')">
+                                        OTP Must Be 4 Character Length</span>
+                                    <span class="validation-error"
+                                        *ngIf="proceedtopaymentForm.get('potp').hasError('pattern') && proceedtopaymentForm.get('potp').touched">
+                                        Enter Correct OTP
+                                    </span>
+                                </div>
+                                <button id="payment-button" type="submit" class="btn btn-lg btn-dark btn-block"
+                                    [disabled]="proceedtopaymentForm.invalid">
+                                    <i class="fa fa-lock fa-lg"></i>&nbsp;
+                                    <span id="payment-button-amount">Pay ${{amountToPay}}</span>
+                                    <span id="payment-button-sending" style="display:none;">Sending…</span>
+                                </button>
+                            </form>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

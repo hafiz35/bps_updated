@@ -1,0 +1,107 @@
+<div class="row d-flex flex-nowrap">
+    <div class="col-sm-12 col-md-6 col-lg-2 order-sm-0">
+        <div class="sidenav opacity">
+            <div class="input-group width-300 ml-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="material-icons">
+                            search
+                        </i>
+                    </span>
+                </div>
+                <input type="text" class="form-control width-50" name="search-bar" id="searchvendor"
+                    placeholder="Search Vendors" (input)="onSearchText($event)">
+            </div>
+            <a (click)="getVendors(vend.vendortype)" *ngFor="let vend of vendorTypeList">
+                <i class="material-icons font-grey font-size-50">
+                    {{vend.vendorImage}}
+                </i>
+                {{vend.vendortype}}
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-10 order-sm-1">
+        <section class="accordion-section clearfix" aria-label="Question Accordions">
+            <div class="container-fluid">
+                <div class="font-size-35 padding-top-10 background-white text-black text-centre opacity height-70">
+                    Your {{vendorTypeName}} Statements
+                </div>
+                <div class="panel-group mt-3" id="accordion" role="tablist" aria-multiselectable="true"
+                    *ngFor="let vendor of vendorList">
+                    <div class="panel panel-default">
+                        <div class="panel-heading p-3 mb-3 opacity" role="tab" id="heading0">
+                            <div class="panel-title">
+                                <a class="collapsed" role="button" title="" data-toggle="collapse"
+                                    data-parent="#accordion" [attr.data-target]="'#'+vendor.vendorName"
+                                    aria-expanded="true" (click)="fetchBillDetails(vendor.vendorName)">
+                                    {{vendor.vendorName}}
+                                </a>
+                            </div>
+                        </div>
+                        <div [id]="vendor.vendorName" class="panel-collapse collapse" role="tabpanel"
+                            aria-labelledby="heading0">
+                            <div class="panel-body px-3 mb-4">
+                                <div class="card-body col-lg-12">
+                                    <div class="card-header font-size-20 background-black text-white">Bill Details
+                                    </div>
+                                    <div *ngIf="vendor.paymentListEmpty">
+                                        <div class="alert alert-danger text-bold">No Bills Available</div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table background-darkgrey text-white"
+                                            *ngIf="!vendor.paymentListEmpty">
+                                            <thead class="text-center">
+                                                <th scope="col">Transaction Id</th>
+                                                <th scope="col">Payment Gateway</th>
+                                                <th scope="col">Paid By</th>
+                                                <th scope="col">Date Of Pay</th>
+                                                <th scope="col">Months Paid</th>
+                                                <th scope="col">Amount Paid</th>
+                                            </thead>
+                                            <tbody *ngFor="let payment of vendor.paymentList">
+                                                <tr class="text-center">
+                                                    <td>#{{payment.bl_id}}</td>
+                                                    <td>{{payment.billpaymentGateway}}</td>
+                                                    <td>{{payment.nameOnCard}}</td>
+                                                    <td>{{payment.dateOfPayString}}</td>
+                                                    <td>{{payment.monthsPaid}}</td>
+                                                    <td>{{payment.billAmount}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <div class="form-group text-center">
+                                    <ul class="list-inline">
+                                        <li>
+                                            <div class="text-bold font-size-25 font-darkslategrey">Pay Your Bills :-
+                                            </div>
+                                        </li>
+                                        <li class="list-inline-item" (click)="onPaytmSelected(vendor.vendorName)"
+                                            *ngIf="vendor.isUsingPaytm"><img class="height-80"
+                                                src="https://img.icons8.com/color/48/000000/paytm.png">
+                                        </li>
+                                        <li class="list-inline-item ml-3" (click)="onCardSelected(vendor.vendorName)"
+                                            *ngIf="vendor.isUsingCard">
+                                            <img class="height-60"
+                                                src="https://img.icons8.com/color/48/000000/bank-card-back-side.png">
+                                        </li>
+                                        <li class="list-inline-item ml-3"
+                                            (click)="onAmazonPaySelected(vendor.vendorName)"
+                                            *ngIf="vendor.isUsingAmazonPay"><img class="height-50"
+                                                src="https://img.icons8.com/plasticine/100/000000/amazon.png">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

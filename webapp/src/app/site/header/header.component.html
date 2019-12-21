@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark opacity">
+    <a routerLink="/login" class="navbar-brand" (click)="homeLink()"><i class="material-icons">
+            assignment
+        </i> Bill Payment System</a>
+    <button class="navbar-toggler" data-toggle="collapse" data-target="#navcontent">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navcontent">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown" *ngIf="!isAuthenticated()">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Register
+                </a>
+                <div class="dropdown-menu bg-dark">
+                    <a routerLink="/signup" class="nav-link text-black">User Register</a>
+                    <a routerLink="/vendorsignup" class="nav-link text-black">Vendor Register</a>
+                </div>
+            </li>
+            <li class="nav-item" *ngIf="!isAuthenticated()">
+                <a routerLink="/login" class="nav-link">Login</a>
+            </li>
+            <li class="nav-item" *ngIf="isAuthenticated()"><a routerLink="/"
+                    class="nav-link" (click)="homeLink()"><i class="material-icons">
+                        person
+                    </i>{{getUser().firstname}}</a></li>
+            <li class="nav-item" *ngIf="isAuthenticated()"><a routerLink="/" class="nav-link"
+                    (click)="onSignOut()">Logout</a></li>
+            <li class="nav-item" *ngIf="!isAuthenticated()">
+                <a routerLink="/faq" class="nav-link">FAQ</a>
+            </li>
+            <li class="nav-item" *ngIf="isAuthenticated() && isUser() || isVendor()"><a routerLink="/report-issue" class="nav-link">Report Issue</a></li>
+        </ul>
+    </div>
+</nav>

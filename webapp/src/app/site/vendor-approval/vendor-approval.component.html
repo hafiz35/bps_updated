@@ -1,0 +1,267 @@
+<div class="container">
+    <div class="card mt-3 tab-card">
+        <div class="card-header tab-card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="vendors-tab" data-toggle="tab" role="tab" aria-selected="true"
+                        (click)="vendorSelected()">Vendors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="issues-tab" data-toggle="tab" role="tab" aria-selected="false"
+                        (click)="issuesSelected()">Issues</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="myTabContent">
+            <div *ngIf="isVendorSelected">
+                <div class="container mt-3 bg-light opacity">
+                    <div class="row justify-content-center">
+                        <div class="alert alert-success" *ngIf="acceptedVendor">
+                            Vendor Accepted
+                        </div>
+                        <div class="alert alert-danger" *ngIf="deletedVendor">
+                            Vendor Declined
+                        </div>
+                        <div class="alert alert-success" *ngIf="sentBackForCorrection">
+                            Vendor Sent Back For Correction Successfully
+                        </div>
+                        <div class="card-body col-lg-12">
+                            <div class="card-header font-size-20">Pending Vendors</div>
+                            <div *ngIf="vendorListEmpty">
+                                <div class="alert alert-danger text-bold">No Pending Vendors</div>
+                            </div>
+                            <div class="table-responsive">
+                                    <table class="table" *ngIf="!vendorListEmpty">
+                                        <thead>
+                                        <th scope="col">Vendor Name</th>
+                                        <th scope="col">Vendor WebSite</th>
+                                        <th scope="col">Action</th>
+                                        <th scope="col"></th>
+                                    </thead>
+                                    <tbody *ngFor="let vendor of vendorList">
+                                        <tr>
+                                            <td>{{vendor.vendorName}}</td>
+                                            <td>{{vendor.vendorWebSite}}</td>
+                                            <td>
+                                                <button class="btn btn-primary" (click)="onApproving(vendor.vendorId)"><i
+                                                        class="material-icons validation-success">
+                                                        check_circle
+                                                    </i></button> 
+                                                <button class="btn btn-danger ml-2 mr-2" data-toggle="modal"
+                                                    data-target="#deleteModal"
+                                                    (click)="selectVendorToDelete(vendor.vendorId)"><i
+                                                        class="material-icons validation-error">
+                                                        cancel
+                                                    </i></button>
+                                                <button class="btn btn-danger" (click)="onSendBackForCorrection(vendor.vendorId)">Send
+                                                    Back
+                                                    For Correction</button>   
+                                            </td>
+                                            <td>
+                                                <span class="alert alert-info height-40" (click)="seeDetails(vendor)"
+                                                    data-toggle="modal" data-target="#displayModal">View Details</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-body col-lg-12 mt-2">
+                            <div class="card-header font-size-20">Sent For Correction Vendors</div>
+                            <div *ngIf="vendorListsentforcorrectionEmpty">
+                                <div class="alert alert-danger text-bold">No Vendor Sent Back For Correction</div>
+                            </div>
+                            <div class="table-responsive">
+                                    <table class="table" *ngIf="!vendorListsentforcorrectionEmpty">
+                                        <thead>
+                                        <th scope="col">Vendor Name</th>
+                                        <th scope="col">Vendor WebSite</th>
+                                        <th scope="col">Action</th>
+                                        <th scope="col"></th>
+                                    </thead>
+                                    <tbody *ngFor="let vendorCorrection of vendorListsentforcorrection">
+                                        <tr>
+                                            <td>{{vendorCorrection.vendorName}}</td>
+                                            <td>{{vendorCorrection.vendorWebSite}}</td>
+                                            <td>
+                                                <button class="btn btn-primary" (click)="onApproving(vendorCorrection.vendorId)"><i
+                                                        class="material-icons validation-success">
+                                                        check_circle
+                                                    </i></button> 
+                                                <button class="btn btn-danger ml-2 mr-2" data-toggle="modal"
+                                                    data-target="#deleteModal"
+                                                    (click)="selectVendorToDelete(vendorCorrection.vendorId)"><i
+                                                        class="material-icons validation-error">
+                                                        cancel
+                                                    </i></button>
+                                            </td>
+                                            <td>
+                                                <span class="alert alert-info height-40"
+                                                    (click)="seeDetails(vendorCorrection)" data-toggle="modal"
+                                                    data-target="#displayModal">View Details</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-body col-lg-12 mt-2">
+                            <div class="card-header font-size-20">Vendors</div>
+                            <div *ngIf="vendorsAvailableEmpty">
+                                <div class="alert alert-danger text-bold">No Vendors Available</div>
+                            </div>
+                            <div class="table-responsive">
+                                    <table class="table" *ngIf="!vendorsAvailableEmpty">
+                                        <thead>
+                                        <th scope="col">Vendor Name</th>
+                                        <th scope="col">Vendor WebSite</th>
+                                        <th scope="col"></th>
+                                    </thead>
+                                    <tbody *ngFor="let vendors of vendorsAvailable">
+                                        <tr>
+                                            <td>{{vendors.vendorName}}</td>
+                                            <td>{{vendors.vendorWebSite}}</td>
+                                            <td>
+                                                <span class="alert alert-info height-40" (click)="seeDetails(vendors)"
+                                                    data-toggle="modal" data-target="#displayModal">View Details</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="basicModal"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Vendor Delete</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Are You Sure You Want To Delete The Vendor?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger"
+                                    (click)="onDeclining(vendorSelectedToDelete)" data-dismiss="modal">Delete
+                                    Vendor</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="displayModal" tabindex="-1" role="dialog" aria-labelledby="basicModal"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Vendor Details</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table borderless">
+                                    <thead>
+                                        <th class="col-6"></th>
+                                        <th class="col-6"></th>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="row">
+                                            <td class="col-6"><label class="text-bold">Vendor Name : </label>
+                                                {{vendorToDisplay?.vendorName}}</td>
+                                            <td class="col-6"><label class="text-bold">Company Registration Number :
+                                                </label>
+                                                {{vendorToDisplay?.vendorRegNo}}</td>
+                                        </tr>
+                                        <tr class="row">
+                                            <td class="col-6">
+                                                <label class="text-bold">Address : </label>
+                                                {{vendorToDisplay?.vendorAddress}}
+                                            </td>
+                                            <td class="col-6">
+                                                <div><label class="text-bold">State :
+                                                    </label>
+                                                    {{vendorToDisplay?.vendorState}}
+                                                </div>
+                                                <div><label class="text-bold">Country :
+                                                    </label>
+                                                    {{vendorToDisplay?.vendorCountry}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="row">
+                                            <td class="col-6">
+                                                <label class="text-bold">Email : </label>
+                                                {{vendorToDisplay?.vendorEmail}}
+                                            </td>
+                                            <td class="col-6">
+                                                <div><label class="text-bold">Contact Number :
+                                                    </label>
+                                                    {{vendorToDisplay?.vendorContactNo}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="row">
+                                            <td class="col-6">
+                                                <label class="text-bold">Certificate Issue Date : </label>
+                                                {{issueDate}}
+                                            </td>
+                                            <td class="col-6">
+                                                <div><label class="text-bold">Certificate Validity Date :
+                                                    </label>
+                                                    {{validityDate}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="row">
+                                            <td class="col-6">
+                                                <label class="text-bold">Web Site : </label>
+                                                {{vendorToDisplay?.vendorWebSite}}
+                                            </td>
+                                            <td class="col-6">
+                                                <label class="text-bold">Year Of Establishment : </label>
+                                                {{vendorToDisplay?.vendorYearOfEstablishment}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="isIssueSelected">
+                <div *ngIf="issueListEmpty" class="mt-4">
+                    <div class="alert alert-danger text-bold">No Issues Found</div>
+                </div>
+                <div *ngIf="!issueListEmpty">
+                    <div *ngFor="let issue of issueList">
+                        <div class="card">
+                            <div class="card-body col-lg-12 mt-2 mb-2">
+                                <div class="card-header font-size-20"><span
+                                        class="text-bold">@{{issue.user.username}}</span> {{issue.issue}}</div>
+                                <div class="card-body">
+                                    <div class="form-group mt-3 col-12">
+                                        <textarea rows="4" cols="50" class="form-control" #answer
+                                            placeholder="Reply To This Issue" required></textarea>
+                                    </div>
+                                    <button type="button" class="btn btn-dark float-right col-3"
+                                        (click)="Reply(issue.issueId,answer)">Reply</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
